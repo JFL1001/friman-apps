@@ -126,8 +126,8 @@
           </div>
           <h2 class="text-2xl font-bold font-display text-gray-800">Preguntas de la Comunidad</h2>
         </div>
-        <span class="text-xs text-green-700 bg-green-100/80 px-3 py-1 rounded-full border border-green-200 font-medium flex items-center gap-1.5">
-          <i class="fa-solid fa-cloud text-xs"></i> Sincronizado en la Nube
+        <span class="text-xs text-purple-700 bg-purple-100/80 px-3 py-1 rounded-full border border-purple-200 font-medium flex items-center gap-1.5">
+          <i class="fa-solid fa-floppy-disk text-xs"></i> Guardado Local permanente
         </span>
       </div>
 
@@ -147,9 +147,7 @@
 
       <!-- Questions List -->
       <div id="questions-list" class="space-y-4">
-        <div class="text-center py-6 text-gray-500 text-sm flex items-center justify-center gap-2">
-          <i class="fa-solid fa-circle-notch animate-spin text-pink-500"></i> Cargando preguntas desde la nube...
-        </div>
+        <!-- Questions rendered here -->
       </div>
     </section>
 
@@ -162,10 +160,9 @@
   </footer>
 
   <script>
-    // Configuración de Seguridad y Nube (JSONBin.io)
+    // Clave secreta de desarrollador
     const DEV_PASSCODE = "JFL1001-DEV-SECRET-KEY-2026-SECURE";
-    const BIN_ID = "66f7f6f5e41b4d34e43899f1"; // Endpoint público global para almacenamiento
-    const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+    const STORAGE_KEY = 'friman_apps_questions_data';
 
     let isAdmin = false;
     let questionsData = [];
@@ -202,45 +199,28 @@
       renderQuestions();
     }
 
-    // Obtener datos desde la API pública en tiempo real
-    async function fetchQuestions() {
-      try {
-        const res = await fetch(`${API_URL}/latest`, {
-          headers: { 'X-Bin-Meta': 'false' }
-        });
-        if (res.ok) {
-          const data = await res.json();
-          questionsData = Array.isArray(data) ? data : [];
-        } else {
+    // Cargar preguntas guardadas en el navegador
+    function loadQuestions() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          questionsData = JSON.parse(stored);
+        } catch (e) {
           questionsData = [];
         }
-      } catch (e) {
-        console.error("Error cargando preguntas:", e);
+      } else {
         questionsData = [];
       }
       renderQuestions();
     }
 
-    // Sincronizar actualización hacia la API
-    async function syncQuestionsWithCloud() {
-      try {
-        await fetch(API_URL, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(questionsData)
-        });
-      } catch (e) {
-        console.error("Error al sincronizar datos:", e);
-      }
+    // Guardar preguntas en el almacenamiento local
+    function saveQuestions() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(questionsData));
     }
 
-    async function submitQuestion(e) {
+    function submitQuestion(e) {
       e.preventDefault();
-      const btn = document.getElementById('btn-submit');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Guardando...`;
 
       const nameInput = document.getElementById('user-name');
       const appInput = document.getElementById('user-app');
@@ -256,25 +236,23 @@
       };
 
       questionsData.unshift(newQ);
-      await syncQuestionsWithCloud();
+      saveQuestions();
 
       textInput.value = '';
       appInput.value = '';
-      btn.disabled = false;
-      btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> <span>Publicar Pregunta</span>`;
       renderQuestions();
     }
 
-    async function deleteQuestion(id) {
+    function deleteQuestion(id) {
       if (!isAdmin) return;
-      if (confirm('¿Estás seguro de que deseas eliminar esta pregunta de la comunidad?')) {
+      if (confirm('¿Estás seguro de que deseas eliminar esta pregunta?')) {
         questionsData = questionsData.filter(q => q.id !== id);
+        saveQuestions();
         renderQuestions();
-        await syncQuestionsWithCloud();
       }
     }
 
-    async function submitAnswer(id) {
+    function submitAnswer(id) {
       if (!isAdmin) return;
       const answerInput = document.getElementById(`answer-input-${id}`);
       const text = answerInput.value.trim();
@@ -283,8 +261,8 @@
       const q = questionsData.find(item => item.id === id);
       if (q) {
         q.answer = text;
+        saveQuestions();
         renderQuestions();
-        await syncQuestionsWithCloud();
       }
     }
 
@@ -342,7 +320,7 @@
     }
 
     document.getElementById('current-year').textContent = new Date().getFullYear();
-    fetchQuestions();
+    loadQuestions();
   </script>
 </body>
 </html>
