@@ -116,17 +116,23 @@
       <!-- Title -->
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-400 to-purple-400 flex items-center justify-center text-white shadow-md shadow-pink-200">
-          <i class="fa-solid fa-[#000] fa-cubes text-lg"></i>
+          <i class="fa-solid fa-cubes text-lg"></i>
         </div>
         <h1 class="text-2xl font-bold font-display tracking-tight text-gray-800">
           Catálogo de Apps
         </h1>
       </div>
 
-      <!-- Developer Tag in Corner -->
-      <div class="bg-white/80 border border-pink-200/80 px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-pink-600 shadow-sm flex items-center gap-2">
-        <span class="inline-block w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>
-        Desarrollado por <span class="font-bold tracking-wide text-gray-800">Friman Apps</span>
+      <!-- Developer Tag & Help Button in Corner -->
+      <div class="flex items-center gap-3">
+        <div class="bg-white/80 border border-pink-200/80 px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-pink-600 shadow-sm flex items-center gap-2">
+          <span class="inline-block w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>
+          Desarrollado por <span class="font-bold tracking-wide text-gray-800">Friman Apps</span>
+        </div>
+        <a href="ayuda.html" class="px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-pink-500 hover:bg-pink-600 text-white shadow-md transition-all flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-question"></i>
+          <span>Ayuda</span>
+        </a>
       </div>
     </div>
   </header>
@@ -223,10 +229,6 @@
   </div>
 
   <script>
-    // =========================================================================
-    // LISTA DE PROGRAMAS (Base de Datos en JavaScript)
-    // Puedes actualizar este arreglo o cargar un archivo externo 'programas.json'
-    // =========================================================================
     const appsData = [
       {
         id: "maximum",
@@ -243,17 +245,14 @@
       }
     ];
 
-    // State Variables
     let currentApp = null;
     let currentImageIndex = 0;
 
-    // DOM Elements
     const appsGrid = document.getElementById('apps-grid');
     const modal = document.getElementById('app-modal');
     const modalBackdrop = document.getElementById('modal-backdrop');
     const closeModalBtn = document.getElementById('close-modal-btn');
 
-    // Modal Content Elements
     const modalLogo = document.getElementById('modal-app-logo');
     const modalName = document.getElementById('modal-app-name');
     const modalVersion = document.getElementById('modal-app-version');
@@ -264,7 +263,6 @@
     const carouselNext = document.getElementById('carousel-next');
     const carouselDots = document.getElementById('carousel-dots');
 
-    // Render All Cards into Grid
     function renderAppCards() {
       appsGrid.innerHTML = '';
 
@@ -273,16 +271,11 @@
         card.className = 'app-card group relative bg-white/90 rounded-3xl p-5 shadow-lg shadow-pink-100/50 border border-white flex flex-col items-center text-center cursor-pointer overflow-hidden';
         
         card.innerHTML = `
-          <!-- App Logo -->
           <div class="relative w-24 h-24 mb-4 rounded-2xl overflow-hidden shadow-md border-2 border-pink-50/80 group-hover:shadow-pink-200 transition-all">
             <img src="${app.logo}" alt="${app.nombre}" class="w-full h-full object-cover">
           </div>
-
-          <!-- App Name -->
           <h3 class="text-lg font-bold font-display text-gray-800 mb-1 line-clamp-1">${app.nombre}</h3>
           <span class="text-xs text-pink-500 font-semibold mb-4">${app.version}</span>
-
-          <!-- Hover Action Area -->
           <div class="download-btn-wrapper w-full mt-auto">
             <button class="w-full py-2.5 px-4 bg-pink-500 hover:bg-pink-600 text-white font-semibold text-xs rounded-xl shadow-md flex items-center justify-center gap-2 transition-all">
               <i class="fa-solid fa-circle-info"></i>
@@ -291,28 +284,23 @@
           </div>
         `;
 
-        // Card Click opens Modal
         card.addEventListener('click', () => openAppModal(app));
         appsGrid.appendChild(card);
       });
     }
 
-    // Modal Functions
     function openAppModal(app) {
       currentApp = app;
       currentImageIndex = 0;
 
-      // Populate static fields
       modalLogo.src = app.logo;
       modalName.textContent = app.nombre;
       modalVersion.textContent = app.version;
       modalDesc.textContent = app.descripcion;
       modalDownloadBtn.href = app.descargaUrl;
 
-      // Update Carousel Images
       updateCarousel();
 
-      // Show Modal with Animation
       modal.classList.remove('opacity-0', 'pointer-events-none');
       const windowEl = modal.querySelector('.glass-modal');
       windowEl.classList.remove('scale-95');
@@ -327,18 +315,15 @@
       modal.classList.add('opacity-0', 'pointer-events-none');
     }
 
-    // Carousel Slider Functions
     function updateCarousel() {
       if (!currentApp || !currentApp.capturas.length) return;
 
-      // Set image source
       carouselImg.style.opacity = '0';
       setTimeout(() => {
         carouselImg.src = currentApp.capturas[currentImageIndex];
         carouselImg.style.opacity = '1';
       }, 150);
 
-      // Render Dots
       carouselDots.innerHTML = '';
       currentApp.capturas.forEach((_, idx) => {
         const dot = document.createElement('button');
@@ -352,7 +337,6 @@
       });
     }
 
-    // Carousel Navigation Listeners
     carouselPrev.addEventListener('click', (e) => {
       e.stopPropagation();
       if (!currentApp) return;
@@ -367,16 +351,13 @@
       updateCarousel();
     });
 
-    // Close Modal Event Handlers
     closeModalBtn.addEventListener('click', closeModal);
     modalBackdrop.addEventListener('click', closeModal);
 
-    // Escape Key Listener
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeModal();
     });
 
-    // Initialize Year & Load App List
     document.getElementById('current-year').textContent = new Date().getFullYear();
     renderAppCards();
   </script>
