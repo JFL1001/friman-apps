@@ -1,0 +1,14 @@
+[
+  {
+    "nombre": "Pizza POS Manager",
+    "descripcion": "Sistema de punto de venta e inventario para pizzerías.",
+    "version": "v1.0",
+    "descarga": "https://github.com/tu-usuario/mis-programas/raw/main/PizzaPOS.zip"
+  },
+  {
+    "nombre": "Organizador de Horarios",
+    "descripcion": "Herramienta web para organizar horarios universitarios.",
+    "version": "v2.1",
+    "descarga": "https://github.com/tu-usuario/mis-programas/raw/main/Horarios.zip"
+  }
+]
