@@ -1,14 +1,25 @@
 [
   {
+    "id": "pizza-pos",
     "nombre": "Pizza POS Manager",
-    "descripcion": "Sistema de punto de venta e inventario para pizzerías.",
-    "version": "v1.0",
-    "descarga": "https://github.com/tu-usuario/mis-programas/raw/main/PizzaPOS.zip"
+    "version": "1.0.0",
+    "descripcion": "Sistema completo de punto de venta e inventario pensado para pizzerías y negocios de comida rápida. Gestiona órdenes, imprime recibos y controla el stock fácilmente.",
+    "logo": "https://via.placeholder.com/150/FFB7B2/ffffff?text=Pizza+POS",
+    "descarga": "https://github.com/tu-usuario/mis-programas/raw/main/PizzaPOS_Setup.exe",
+    "capturas": [
+      "https://via.placeholder.com/600x350/FFB7B2/333333?text=Menu+Principal",
+      "https://via.placeholder.com/600x350/FFDAC1/333333?text=Gestion+de+Inventario"
+    ]
   },
   {
-    "nombre": "Organizador de Horarios",
-    "descripcion": "Herramienta web para organizar horarios universitarios.",
-    "version": "v2.1",
-    "descarga": "https://github.com/tu-usuario/mis-programas/raw/main/Horarios.zip"
+    "id": "enercontrol",
+    "nombre": "EnerControl RD",
+    "version": "2.1.0",
+    "descripcion": "Herramienta de monitoreo y gestión energética para proyectos con automatización y sensores.",
+    "logo": "https://via.placeholder.com/150/E2F0CB/333333?text=EnerControl",
+    "descarga": "https://github.com/tu-usuario/mis-programas/raw/main/EnerControl.zip",
+    "capturas": [
+      "https://via.placeholder.com/600x350/E2F0CB/333333?text=Panel+de+Monitoreo"
+    ]
   }
 ]
