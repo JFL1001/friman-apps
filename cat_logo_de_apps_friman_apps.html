@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo de Apps - Friman Apps</title>
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            pastel: {
+              bgStart: '#ffd1dc',
+              bgMid: '#ffe5ec',
+              bgEnd: '#f0e6ff',
+              card: '#ffffff',
+              accentPrimary: '#ff85a1',
+              accentSecondary: '#b5e2fa',
+              accentHover: '#ff6088',
+              textMain: '#2b2d42',
+              textMuted: '#6c757d',
+              badge: '#eed3d9',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #ffcbf2 0%, #ec3b8333 35%, #e2afff55 70%, #ffe5ec 100%);
+      background-attachment: fixed;
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      color: #2b2d42;
+    }
+
+    .font-display {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Soft Glow and Glassmorphism */
+    .glass-header {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .glass-modal {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    /* Card Hover Dynamics */
+    .app-card {
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
+    }
+
+    .app-card:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 20px 30px -10px rgba(255, 133, 161, 0.3);
+    }
+
+    .download-btn-wrapper {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .app-card:hover .download-btn-wrapper {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Custom Scrollbar for Modal */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #ffb3c6;
+      border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #ff85a1;
+    }
+  </style>
+</head>
+<body class="relative flex flex-col justify-between antialiased selection:bg-pink-300 selection:text-pink-900">
+
+  <!-- Top Bar / Header -->
+  <header class="sticky top-0 z-30 glass-header px-6 py-4 shadow-sm transition-all duration-300">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+      <!-- Title -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-400 to-purple-400 flex items-center justify-center text-white shadow-md shadow-pink-200">
+          <i class="fa-solid fa-[#000] fa-cubes text-lg"></i>
+        </div>
+        <h1 class="text-2xl font-bold font-display tracking-tight text-gray-800">
+          Catálogo de Apps
+        </h1>
+      </div>
+
+      <!-- Developer Tag in Corner -->
+      <div class="bg-white/80 border border-pink-200/80 px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-pink-600 shadow-sm flex items-center gap-2">
+        <span class="inline-block w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>
+        Desarrollado por <span class="font-bold tracking-wide text-gray-800">Friman Apps</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Catalog Area -->
+  <main class="max-w-6xl mx-auto px-6 py-10 flex-grow w-full">
+    <!-- Subtitle Banner -->
+    <div class="text-center mb-10">
+      <h2 class="text-3xl sm:text-4xl font-extrabold font-display text-gray-800 mb-2">Explora mis aplicaciones</h2>
+      <p class="text-gray-600 max-w-lg mx-auto text-sm sm:text-base">
+        Haz clic en cualquiera de las herramientas para ver capturas de pantalla, información detallada y descargarlas gratis.
+      </p>
+    </div>
+
+    <!-- Grid Container -->
+    <div id="apps-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <!-- Dynamic app cards injected here via JS -->
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto py-6 border-t border-white/40 text-center text-xs text-gray-500">
+    <p>© <span id="current-year"></span> Friman Apps - Todos los derechos reservados.</p>
+    <p class="mt-1 text-gray-400">Alojado gratuitamente en GitHub Pages</p>
+  </footer>
+
+  <!-- App Details Modal -->
+  <div id="app-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 opacity-0 pointer-events-none transition-all duration-300">
+    <!-- Backdrop Blur -->
+    <div id="modal-backdrop" class="absolute inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity duration-300"></div>
+
+    <!-- Modal Content Window -->
+    <div class="relative w-full max-w-2xl glass-modal rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-300 border border-white/60 flex flex-col max-h-[90vh]">
+      
+      <!-- Close Button -->
+      <button id="close-modal-btn" class="absolute top-4 right-4 z-20 w-10 h-10 bg-white/80 hover:bg-white text-gray-700 hover:text-pink-600 rounded-full flex items-center justify-center shadow-md transition-all">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <!-- Scrollable Inner Content -->
+      <div class="p-6 sm:p-8 overflow-y-auto custom-scrollbar flex-grow space-y-6">
+        
+        <!-- Header: Logo, Name & Version -->
+        <div class="flex items-center gap-4">
+          <img id="modal-app-logo" src="" alt="App Logo" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover shadow-md border-2 border-white">
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h3 id="modal-app-name" class="text-2xl sm:text-3xl font-bold font-display text-gray-800"></h3>
+              <span id="modal-app-version" class="px-3 py-0.5 rounded-full text-xs font-semibold bg-pink-100 text-pink-700 border border-pink-200"></span>
+            </div>
+            <p class="text-xs sm:text-sm text-gray-500 mt-1">Publicado por <span class="font-medium text-gray-700">Friman Apps</span></p>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Descripción</h4>
+          <p id="modal-app-description" class="text-gray-700 text-sm sm:text-base leading-relaxed bg-white/50 p-4 rounded-2xl border border-pink-100/60"></p>
+        </div>
+
+        <!-- Screenshots Carousel Slider -->
+        <div>
+          <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Vistas Previas</h4>
+          
+          <div class="relative group rounded-2xl overflow-hidden bg-gray-100 shadow-inner border border-gray-200/80 aspect-video flex items-center justify-center">
+            <!-- Image Frame -->
+            <img id="carousel-img" src="" alt="Screenshot" class="w-full h-full object-cover transition-opacity duration-300">
+
+            <!-- Left / Right Controls -->
+            <button id="carousel-prev" class="absolute left-3 w-10 h-10 bg-white/80 hover:bg-white text-gray-800 rounded-full flex items-center justify-center shadow-md opacity-90 sm:opacity-0 group-hover:opacity-100 transition-all">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button id="carousel-next" class="absolute right-3 w-10 h-10 bg-white/80 hover:bg-white text-gray-800 rounded-full flex items-center justify-center shadow-md opacity-90 sm:opacity-0 group-hover:opacity-100 transition-all">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+
+            <!-- Slide Dots Indicator -->
+            <div id="carousel-dots" class="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1 bg-black/40 backdrop-blur-md rounded-full">
+              <!-- Dynamic Dots -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div class="p-4 sm:p-6 bg-white/80 border-t border-gray-100 flex items-center justify-end">
+        <a id="modal-download-btn" href="#" target="_blank" download class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 text-white font-bold rounded-2xl shadow-lg shadow-pink-200 hover:shadow-pink-300 text-center flex items-center justify-center gap-2 transition-all transform active:scale-95">
+          <i class="fa-solid fa-download"></i>
+          <span>Descargar Programa</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // LISTA DE PROGRAMAS (Base de Datos en JavaScript)
+    // Puedes actualizar este arreglo o cargar un archivo externo 'programas.json'
+    // =========================================================================
+    const appsData = [
+      {
+        id: "pizza-pos",
+        nombre: "Pizza POS Manager",
+        version: "v1.2.0",
+        logo: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=300&auto=format&fit=crop&q=80",
+        descripcion: "Sistema integral de punto de venta y gestión de inventario diseñado para pizzerías y negocios de comida rápida. Incluye control de ingredientes, emisión de tickets y estadísticas de ventas diarias.",
+        descargaUrl: "https://github.com/tu-usuario/mis-programas/raw/main/PizzaPOS.zip",
+        capturas: [
+          "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=80",
+          "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=800&auto=format&fit=crop&q=80",
+          "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80"
+        ]
+      },
+      {
+        id: "organizador-horarios",
+        nombre: "Organizador de Horarios",
+        version: "v2.1.0",
+        logo: "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=300&auto=format&fit=crop&q=80",
+        descripcion: "Herramienta ágil e intuitiva para estudiantes universitarios y colegiales. Permite gestionar clases, recordatorios de tareas, exámenes y cálculo de calificaciones promedio.",
+        descargaUrl: "https://github.com/tu-usuario/mis-programas/raw/main/HorariosApp.zip",
+        capturas: [
+          "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&auto=format&fit=crop&q=80",
+          "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop&q=80"
+        ]
+      },
+      {
+        id: "enercontrol-rd",
+        nombre: "EnerControl RD",
+        version: "v1.0.4",
+        logo: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=300&auto=format&fit=crop&q=80",
+        descripcion: "Aplicación para el monitoreo y cálculo del consumo eléctrico del hogar. Permite registrar lecturas de contadores y estimar el costo de la factura mensual.",
+        descargaUrl: "https://github.com/tu-usuario/mis-programas/raw/main/EnerControl.zip",
+        capturas: [
+          "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80",
+          "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&auto=format&fit=crop&q=80"
+        ]
+      },
+      {
+        id: "task-flow",
+        nombre: "TaskFlow Studio",
+        version: "v3.0.1",
+        logo: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&auto=format&fit=crop&q=80",
+        descripcion: "Planificador de proyectos personales utilizando la técnica Kanban. Organiza tus ideas en listas de tareas pendientes, en proceso y completadas con etiquetas de color.",
+        descargaUrl: "https://github.com/tu-usuario/mis-programas/raw/main/TaskFlow.zip",
+        capturas: [
+          "https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?w=800&auto=format&fit=crop&q=80",
+          "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=800&auto=format&fit=crop&q=80"
+        ]
+      }
+    ];
+
+    // State Variables
+    let currentApp = null;
+    let currentImageIndex = 0;
+
+    // DOM Elements
+    const appsGrid = document.getElementById('apps-grid');
+    const modal = document.getElementById('app-modal');
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+
+    // Modal Content Elements
+    const modalLogo = document.getElementById('modal-app-logo');
+    const modalName = document.getElementById('modal-app-name');
+    const modalVersion = document.getElementById('modal-app-version');
+    const modalDesc = document.getElementById('modal-app-description');
+    const modalDownloadBtn = document.getElementById('modal-download-btn');
+    const carouselImg = document.getElementById('carousel-img');
+    const carouselPrev = document.getElementById('carousel-prev');
+    const carouselNext = document.getElementById('carousel-next');
+    const carouselDots = document.getElementById('carousel-dots');
+
+    // Render All Cards into Grid
+    function renderAppCards() {
+      appsGrid.innerHTML = '';
+
+      appsData.forEach((app) => {
+        const card = document.createElement('div');
+        card.className = 'app-card group relative bg-white/90 rounded-3xl p-5 shadow-lg shadow-pink-100/50 border border-white flex flex-col items-center text-center cursor-pointer overflow-hidden';
+        
+        card.innerHTML = `
+          <!-- App Logo -->
+          <div class="relative w-24 h-24 mb-4 rounded-2xl overflow-hidden shadow-md border-2 border-pink-50/80 group-hover:shadow-pink-200 transition-all">
+            <img src="${app.logo}" alt="${app.nombre}" class="w-full h-full object-cover">
+          </div>
+
+          <!-- App Name -->
+          <h3 class="text-lg font-bold font-display text-gray-800 mb-1 line-clamp-1">${app.nombre}</h3>
+          <span class="text-xs text-pink-500 font-semibold mb-4">${app.version}</span>
+
+          <!-- Hover Action Area -->
+          <div class="download-btn-wrapper w-full mt-auto">
+            <button class="w-full py-2.5 px-4 bg-pink-500 hover:bg-pink-600 text-white font-semibold text-xs rounded-xl shadow-md flex items-center justify-center gap-2 transition-all">
+              <i class="fa-solid fa-circle-info"></i>
+              <span>Ver Detalles</span>
+            </button>
+          </div>
+        `;
+
+        // Card Click opens Modal
+        card.addEventListener('click', () => openAppModal(app));
+        appsGrid.appendChild(card);
+      });
+    }
+
+    // Modal Functions
+    function openAppModal(app) {
+      currentApp = app;
+      currentImageIndex = 0;
+
+      // Populate static fields
+      modalLogo.src = app.logo;
+      modalName.textContent = app.nombre;
+      modalVersion.textContent = app.version;
+      modalDesc.textContent = app.descripcion;
+      modalDownloadBtn.href = app.descargaUrl;
+
+      // Update Carousel Images
+      updateCarousel();
+
+      // Show Modal with Animation
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      const windowEl = modal.querySelector('.glass-modal');
+      windowEl.classList.remove('scale-95');
+      windowEl.classList.add('scale-100');
+    }
+
+    function closeModal() {
+      const windowEl = modal.querySelector('.glass-modal');
+      windowEl.classList.remove('scale-100');
+      windowEl.classList.add('scale-95');
+
+      modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    // Carousel Slider Functions
+    function updateCarousel() {
+      if (!currentApp || !currentApp.capturas.length) return;
+
+      // Set image source
+      carouselImg.style.opacity = '0';
+      setTimeout(() => {
+        carouselImg.src = currentApp.capturas[currentImageIndex];
+        carouselImg.style.opacity = '1';
+      }, 150);
+
+      // Render Dots
+      carouselDots.innerHTML = '';
+      currentApp.capturas.forEach((_, idx) => {
+        const dot = document.createElement('button');
+        dot.className = `w-2 h-2 rounded-full transition-all ${idx === currentImageIndex ? 'bg-pink-400 w-5' : 'bg-white/60'}`;
+        dot.addEventListener('click', (e) => {
+          e.stopPropagation();
+          currentImageIndex = idx;
+          updateCarousel();
+        });
+        carouselDots.appendChild(dot);
+      });
+    }
+
+    // Carousel Navigation Listeners
+    carouselPrev.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!currentApp) return;
+      currentImageIndex = (currentImageIndex - 1 + currentApp.capturas.length) % currentApp.capturas.length;
+      updateCarousel();
+    });
+
+    carouselNext.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!currentApp) return;
+      currentImageIndex = (currentImageIndex + 1) % currentApp.capturas.length;
+      updateCarousel();
+    });
+
+    // Close Modal Event Handlers
+    closeModalBtn.addEventListener('click', closeModal);
+    modalBackdrop.addEventListener('click', closeModal);
+
+    // Escape Key Listener
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // Initialize Year & Load App List
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+    renderAppCards();
+  </script>
+</body>
+</html>
