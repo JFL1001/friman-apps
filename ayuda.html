@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Preguntas y Ayuda - Friman Apps</title>
   
+  <!-- Favicon / Icono de la Pestaña -->
+  <link rel="icon" type="image/png" href="icontutorial.png">
+  
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
@@ -108,12 +111,16 @@
         Mira este breve video explicativo sobre cómo descargar, descomprimir e instalar cualquiera de nuestras aplicaciones en tu computadora sin inconvenientes.
       </p>
       
-      <!-- Video Frame -->
+      <!-- Video Frame (YouTube Embed) -->
       <div class="relative rounded-2xl overflow-hidden bg-black/5 shadow-inner border border-white aspect-video flex items-center justify-center">
-        <video controls class="w-full h-full object-cover">
-          <source src="https://youtu.be/sYqY9n_4H68" type="video/mp4">
-          Tu navegador no soporta la reproducción de video.
-        </video>
+        <iframe 
+          class="w-full h-full" 
+          src="https://www.youtube.com/embed/sYqY9n_4H68" 
+          title="Tutorial de Instalación - Friman Apps" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          allowfullscreen>
+        </iframe>
       </div>
     </section>
 
