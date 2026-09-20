@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Catálogo de Apps - Friman Apps</title>
   
+  <!-- Favicon / Icono de la pestaña -->
+  <link rel="icon" href="iconmain.png" type="image/png">
+
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
@@ -62,6 +65,13 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .glass-search {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
     }
 
     .glass-modal {
@@ -140,16 +150,41 @@
   <!-- Main Catalog Area -->
   <main class="max-w-6xl mx-auto px-6 py-10 flex-grow w-full">
     <!-- Subtitle Banner -->
-    <div class="text-center mb-10">
+    <div class="text-center mb-8">
       <h2 class="text-3xl sm:text-4xl font-extrabold font-display text-gray-800 mb-2">Explora mis aplicaciones</h2>
       <p class="text-gray-600 max-w-lg mx-auto text-sm sm:text-base">
         Haz clic en cualquiera de las herramientas para ver capturas de pantalla, información detallada y descargarlas gratis.
       </p>
     </div>
 
+    <!-- Barra de Búsqueda -->
+    <div class="max-w-xl mx-auto mb-10">
+      <div class="relative flex items-center">
+        <i class="fa-solid fa-magnifying-glass absolute left-4 text-pink-400 text-base"></i>
+        <input 
+          type="text" 
+          id="search-input" 
+          placeholder="Buscar aplicación o usar #etiqueta (ej. #juegos, #utilidad)..." 
+          class="w-full pl-11 pr-10 py-3.5 rounded-2xl glass-search text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-400 shadow-md transition-all"
+        >
+        <button id="clear-search" class="absolute right-3.5 text-gray-400 hover:text-pink-500 hidden transition-colors">
+          <i class="fa-solid fa-circle-xmark text-lg"></i>
+        </button>
+      </div>
+    </div>
+
     <!-- Grid Container -->
     <div id="apps-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       <!-- Dynamic app cards injected here via JS -->
+    </div>
+
+    <!-- Mensaje cuando no hay resultados -->
+    <div id="no-results" class="hidden text-center py-12">
+      <div class="w-16 h-16 bg-pink-100 text-pink-500 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl shadow-inner">
+        <i class="fa-solid fa-ghost"></i>
+      </div>
+      <p class="text-gray-700 font-bold text-lg">No se encontraron aplicaciones</p>
+      <p class="text-gray-500 text-sm mt-1">Intenta buscar con otros términos o con una etiqueta diferente.</p>
     </div>
   </main>
 
@@ -184,6 +219,8 @@
               <span id="modal-app-version" class="px-3 py-0.5 rounded-full text-xs font-semibold bg-pink-100 text-pink-700 border border-pink-200"></span>
             </div>
             <p class="text-xs sm:text-sm text-gray-500 mt-1">Publicado por <span class="font-medium text-gray-700">Friman Apps</span></p>
+            <!-- Modal Tags Container -->
+            <div id="modal-app-tags" class="flex flex-wrap gap-1.5 mt-2"></div>
           </div>
         </div>
 
@@ -237,6 +274,7 @@
         logo: "https://6aace056e86d4c28a0589730.imgix.net/logos/ChatGPT%20Image%2014%20sept%202026,%2011_47_16%20p.m..png",
         descripcion: "Sistema de organización de horarios automático, organizador de tareas por prioridad y almacenador y graficador de calificaciones universitarias.",
         descargaUrl: "https://link-hub.net/9478683/akBVPLf6qJNj",
+        etiquetas: ["utilidad", "universidad", "productividad", "horarios"],
         capturas: [
           "https://6aace056e86d4c28a0589730.imgix.net/Captura%20de%20pantalla%202026-09-18%20025653.png",
           "https://6aace056e86d4c28a0589730.imgix.net/Captura%20de%20pantalla%202026-09-18%20032507.png",
@@ -248,8 +286,9 @@
         nombre: "Paper Minecraft",
         version: "v11.7.0",
         logo: "https://i.postimg.cc/t4nj3jfq/images.jpg",
-        descripcion: "Minecraft Paper es un fangame de Minecraft desarrollado por la comunidad de Scratch con una visión del juegon eb el aspecto 2D.",
+        descripcion: "Minecraft Paper es un fangame de Minecraft desarrollado por la comunidad de Scratch con una visión del juego en el aspecto 2D.",
         descargaUrl: "https://link-hub.net/9478683/xFnh2tPMZWbT",
+        etiquetas: ["juegos", "scratch", "2d", "fangame"],
         capturas: [
           "https://i.postimg.cc/tgd8kCND/Captura-de-pantalla-2026-09-20-005344.png",
           "https://i.postimg.cc/FKbwpsVZ/Captura-de-pantalla-2026-09-20-005405.png"
@@ -265,29 +304,50 @@
     const modalBackdrop = document.getElementById('modal-backdrop');
     const closeModalBtn = document.getElementById('close-modal-btn');
 
+    const searchInput = document.getElementById('search-input');
+    const clearSearchBtn = document.getElementById('clear-search');
+    const noResults = document.getElementById('no-results');
+
     const modalLogo = document.getElementById('modal-app-logo');
     const modalName = document.getElementById('modal-app-name');
     const modalVersion = document.getElementById('modal-app-version');
     const modalDesc = document.getElementById('modal-app-description');
+    const modalTags = document.getElementById('modal-app-tags');
     const modalDownloadBtn = document.getElementById('modal-download-btn');
     const carouselImg = document.getElementById('carousel-img');
     const carouselPrev = document.getElementById('carousel-prev');
     const carouselNext = document.getElementById('carousel-next');
     const carouselDots = document.getElementById('carousel-dots');
 
-    function renderAppCards() {
+    function renderAppCards(appsToRender = appsData) {
       appsGrid.innerHTML = '';
 
-      appsData.forEach((app) => {
+      if (appsToRender.length === 0) {
+        noResults.classList.remove('hidden');
+      } else {
+        noResults.classList.add('hidden');
+      }
+
+      appsToRender.forEach((app) => {
         const card = document.createElement('div');
         card.className = 'app-card group relative bg-white/90 rounded-3xl p-5 shadow-lg shadow-pink-100/50 border border-white flex flex-col items-center text-center cursor-pointer overflow-hidden';
         
+        // Render Tags Badges
+        const tagsHTML = app.etiquetas ? app.etiquetas.map(tag => 
+          `<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-pink-50 text-pink-600 border border-pink-100">#${tag}</span>`
+        ).join(' ') : '';
+
         card.innerHTML = `
-          <div class="relative w-24 h-24 mb-4 rounded-2xl overflow-hidden shadow-md border-2 border-pink-50/80 group-hover:shadow-pink-200 transition-all">
+          <div class="relative w-24 h-24 mb-3 rounded-2xl overflow-hidden shadow-md border-2 border-pink-50/80 group-hover:shadow-pink-200 transition-all">
             <img src="${app.logo}" alt="${app.nombre}" class="w-full h-full object-cover">
           </div>
-          <h3 class="text-lg font-bold font-display text-gray-800 mb-1 line-clamp-1">${app.nombre}</h3>
-          <span class="text-xs text-pink-500 font-semibold mb-4">${app.version}</span>
+          <h3 class="text-lg font-bold font-display text-gray-800 mb-0.5 line-clamp-1">${app.nombre}</h3>
+          <span class="text-xs text-pink-500 font-semibold mb-2">${app.version}</span>
+          
+          <div class="flex flex-wrap justify-center gap-1 mb-4">
+            ${tagsHTML}
+          </div>
+
           <div class="download-btn-wrapper w-full mt-auto">
             <button class="w-full py-2.5 px-4 bg-pink-500 hover:bg-pink-600 text-white font-semibold text-xs rounded-xl shadow-md flex items-center justify-center gap-2 transition-all">
               <i class="fa-solid fa-circle-info"></i>
@@ -301,6 +361,42 @@
       });
     }
 
+    function filterApps() {
+      const query = searchInput.value.trim().toLowerCase();
+
+      if (query.length > 0) {
+        clearSearchBtn.classList.remove('hidden');
+      } else {
+        clearSearchBtn.classList.add('hidden');
+      }
+
+      if (query.startsWith('#')) {
+        const tagQuery = query.substring(1).trim();
+        if (tagQuery === '') {
+          renderAppCards(appsData);
+          return;
+        }
+        const filtered = appsData.filter(app => 
+          app.etiquetas && app.etiquetas.some(t => t.toLowerCase().includes(tagQuery))
+        );
+        renderAppCards(filtered);
+      } else {
+        const filtered = appsData.filter(app => 
+          app.nombre.toLowerCase().includes(query) || 
+          app.descripcion.toLowerCase().includes(query)
+        );
+        renderAppCards(filtered);
+      }
+    }
+
+    searchInput.addEventListener('input', filterApps);
+
+    clearSearchBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      filterApps();
+      searchInput.focus();
+    });
+
     function openAppModal(app) {
       currentApp = app;
       currentImageIndex = 0;
@@ -310,6 +406,11 @@
       modalVersion.textContent = app.version;
       modalDesc.textContent = app.descripcion;
       modalDownloadBtn.href = app.descargaUrl;
+
+      // Render Modal Tags
+      modalTags.innerHTML = app.etiquetas ? app.etiquetas.map(tag => 
+        `<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-pink-100/70 text-pink-700 border border-pink-200">#${tag}</span>`
+      ).join('') : '';
 
       updateCarousel();
 
