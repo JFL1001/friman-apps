@@ -194,6 +194,55 @@
     <p class="mt-1 text-gray-400">Alojado gratuitamente en GitHub Pages</p>
   </footer>
 
+  <!-- Welcome / Terms Modal for First-time Visitors -->
+  <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 opacity-0 pointer-events-none transition-all duration-300 hidden">
+    <!-- Screen Blur Overlay -->
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-md"></div>
+
+    <!-- Modal Card Window -->
+    <div class="relative w-full max-w-md glass-modal rounded-3xl shadow-2xl p-6 sm:p-8 border border-white/80 z-10 flex flex-col items-center text-center space-y-5 transform transition-all duration-300 scale-95">
+      
+      <!-- Icon Header -->
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-pink-400 to-purple-400 flex items-center justify-center text-white shadow-lg shadow-pink-200/50 text-2xl">
+        <i class="fa-solid fa-cubes"></i>
+      </div>
+
+      <!-- Welcome Text -->
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold font-display text-gray-800">Bienvenido a Friman Apps</h2>
+        <p class="text-xs font-bold uppercase tracking-widest text-pink-500 mt-1">Friman Companies</p>
+      </div>
+
+      <p class="text-gray-600 text-xs sm:text-sm leading-relaxed">
+        Aquí puedes explorar todos los programas desarrollados y descargarlos si así lo prefieres.
+      </p>
+
+      <!-- Policies & Terms Links -->
+      <div class="flex items-center justify-center gap-4 text-xs font-semibold text-pink-600 border-t border-b border-pink-100 py-3 w-full">
+        <a href="politicas.html" target="_blank" class="hover:underline flex items-center gap-1 transition-colors">
+          <i class="fa-solid fa-shield-halved text-pink-400"></i>
+          <span>Políticas de Privacidad</span>
+        </a>
+        <span class="text-gray-300">•</span>
+        <a href="terminos.html" target="_blank" class="hover:underline flex items-center gap-1 transition-colors">
+          <i class="fa-solid fa-file-contract text-pink-400"></i>
+          <span>Términos de Uso</span>
+        </a>
+      </div>
+
+      <!-- Consent Checkbox -->
+      <label class="flex items-start gap-3 text-left text-xs sm:text-sm text-gray-700 cursor-pointer select-none bg-pink-50/60 p-3 rounded-2xl border border-pink-100/80 w-full hover:bg-pink-50 transition-colors">
+        <input type="checkbox" id="terms-checkbox" class="mt-0.5 h-4 w-4 rounded border-gray-300 text-pink-500 focus:ring-pink-400 accent-pink-500 cursor-pointer">
+        <span>He leído las <a href="politicas.html" target="_blank" class="text-pink-600 font-semibold underline">políticas de privacidad</a> y <a href="terminos.html" target="_blank" class="text-pink-600 font-semibold underline">términos de uso</a></span>
+      </label>
+
+      <!-- Continue Action Button -->
+      <button id="welcome-continue-btn" disabled class="w-full py-3.5 px-6 rounded-2xl font-bold text-white shadow-md transition-all duration-200 bg-gray-300 cursor-not-allowed opacity-60">
+        Continuar
+      </button>
+    </div>
+  </div>
+
   <!-- App Details Modal -->
   <div id="app-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 opacity-0 pointer-events-none transition-all duration-300">
     <!-- Backdrop Blur -->
@@ -350,6 +399,50 @@
     const carouselNext = document.getElementById('carousel-next');
     const carouselDots = document.getElementById('carousel-dots');
 
+    // First Visit / Welcome Modal Elements
+    const welcomeModal = document.getElementById('welcome-modal');
+    const termsCheckbox = document.getElementById('terms-checkbox');
+    const welcomeContinueBtn = document.getElementById('welcome-continue-btn');
+
+    // Check First Visit Logic
+    function checkFirstVisit() {
+      const hasVisited = localStorage.getItem('hasVisitedFrimanApps');
+      if (!hasVisited) {
+        welcomeModal.classList.remove('hidden');
+        setTimeout(() => {
+          welcomeModal.classList.remove('opacity-0', 'pointer-events-none');
+          const windowBox = welcomeModal.querySelector('.glass-modal');
+          windowBox.classList.remove('scale-95');
+          windowBox.classList.add('scale-100');
+        }, 50);
+      }
+    }
+
+    termsCheckbox.addEventListener('change', () => {
+      if (termsCheckbox.checked) {
+        welcomeContinueBtn.disabled = false;
+        welcomeContinueBtn.className = 'w-full py-3.5 px-6 rounded-2xl font-bold text-white shadow-lg shadow-pink-200 bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 cursor-pointer transform active:scale-95 transition-all';
+      } else {
+        welcomeContinueBtn.disabled = true;
+        welcomeContinueBtn.className = 'w-full py-3.5 px-6 rounded-2xl font-bold text-white shadow-md transition-all duration-200 bg-gray-300 cursor-not-allowed opacity-60';
+      }
+    });
+
+    welcomeContinueBtn.addEventListener('click', () => {
+      if (!termsCheckbox.checked) return;
+      
+      localStorage.setItem('hasVisitedFrimanApps', 'true');
+      
+      const windowBox = welcomeModal.querySelector('.glass-modal');
+      windowBox.classList.remove('scale-100');
+      windowBox.classList.add('scale-95');
+      welcomeModal.classList.add('opacity-0', 'pointer-events-none');
+
+      setTimeout(() => {
+        welcomeModal.classList.add('hidden');
+      }, 300);
+    });
+
     function renderAppCards(appsToRender = appsData) {
       appsGrid.innerHTML = '';
 
@@ -504,6 +597,7 @@
 
     document.getElementById('current-year').textContent = new Date().getFullYear();
     renderAppCards();
+    checkFirstVisit();
   </script>
 </body>
 </html>
