@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Políticas de Privacidad - Friman Apps</title>
+    
+    <!-- Google Fonts & Tailwind CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fdf2f8',
+                            100: '#fce7f3',
+                            500: '#ec4899',
+                            600: '#db2777',
+                            900: '#831843',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+    <!-- Fondo decorativo con gradiente -->
+    <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl"></div>
+        <div class="absolute top-1/2 -left-40 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- Navegación superior -->
+    <header class="border-b border-slate-800/80 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2 text-slate-300 hover:text-white transition-colors">
+                <i data-lucide="arrow-left" class="w-5 h-5 text-brand-500"></i>
+                <span class="font-heading font-semibold text-sm">Volver a Friman Apps</span>
+            </a>
+            <div class="flex items-center gap-2">
+                <i data-lucide="shield-check" class="w-5 h-5 text-brand-500"></i>
+                <span class="font-heading font-bold bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">Privacidad</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="max-w-4xl mx-auto px-4 py-12 flex-grow w-full">
+        <article class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-10 shadow-2xl backdrop-blur-xl space-y-8">
+            
+            <!-- Encabezado de la página -->
+            <header class="border-b border-slate-800 pb-6">
+                <h1 class="text-3xl sm:text-4xl font-heading font-extrabold text-white mb-2">Política de Privacidad</h1>
+                <p class="text-sm text-slate-400">Última actualización: 2 de octubre de 2026</p>
+            </header>
+
+            <!-- Sección 1 -->
+            <section class="space-y-3">
+                <h2 class="text-xl font-heading font-semibold text-brand-500 flex items-center gap-2">
+                    <i data-lucide="database" class="w-5 h-5"></i>
+                    1. Recopilación de Información
+                </h2>
+                <p class="text-slate-300 leading-relaxed">
+                    En <strong class="text-white">Friman Apps</strong> respetamos tu privacidad. No recopilamos, vendemos ni rastreamos información de identificación personal de los usuarios que navegan en nuestra plataforma principal. 
+                </p>
+                <p class="text-slate-300 leading-relaxed">
+                    Ciertas utilidades o herramientas web alojadas en la plataforma pueden almacenar preferencias locales (como configuraciones, sesiones temporales o aceptación de términos) directamente en el almacenamiento de tu navegador (<code class="bg-slate-800 px-1.5 py-0.5 rounded text-brand-500 text-sm">localStorage</code>).
+                </p>
+            </section>
+
+            <!-- Sección 2 -->
+            <section class="space-y-3">
+                <h2 class="text-xl font-heading font-semibold text-brand-500 flex items-center gap-2">
+                    <i data-lucide="hard-drive" class="w-5 h-5"></i>
+                    2. Uso del Almacenamiento Local (LocalStorage)
+                </h2>
+                <p class="text-slate-300 leading-relaxed">
+                    Utilizamos <code class="bg-slate-800 px-1.5 py-0.5 rounded text-brand-500 text-sm">localStorage</code> con el único propósito de mejorar tu experiencia de usuario, por ejemplo:
+                </p>
+                <ul class="list-disc list-inside text-slate-300 space-y-1 pl-2">
+                    <li>Recordar la aceptación del aviso de bienvenida y términos de uso.</li>
+                    <li>Guardar preferencias individuales dentro de las aplicaciones web.</li>
+                </ul>
+                <p class="text-slate-300 leading-relaxed">
+                    Estos datos permanecen exclusivamente en tu dispositivo y puedes borrarlos en cualquier momento limpiando el historial o los datos del sitio en tu navegador.
+                </p>
+            </section>
+
+            <!-- Sección 3 -->
+            <section class="space-y-3">
+                <h2 class="text-xl font-heading font-semibold text-brand-500 flex items-center gap-2">
+                    <i data-lucide="external-link" class="w-5 h-5"></i>
+                    3. Enlaces y Aplicaciones de Terceros
+                </h2>
+                <p class="text-slate-300 leading-relaxed">
+                    Friman Apps puede contener enlaces hacia herramientas externas, servicios o proyectos alojados en servidores de terceros. No nos hacemos responsables de las prácticas de privacidad ni del contenido de dichos sitios externos. Te recomendamos revisar las políticas de privacidad de cada sitio que visites.
+                </p>
+            </section>
+
+            <!-- Sección 4 -->
+            <section class="space-y-3">
+                <h2 class="text-xl font-heading font-semibold text-brand-500 flex items-center gap-2">
+                    <i data-lucide="lock" class="w-5 h-5"></i>
+                    4. Seguridad
+                </h2>
+                <p class="text-slate-300 leading-relaxed">
+                    Adoptamos medidas técnicas estándar para garantizar que el acceso a la plataforma sea seguro. Sin embargo, al no procesar datos sensibles ni financieros en nuestros servidores, el riesgo asociado al manejo de datos personales en nuestro sitio es inexistente.
+                </p>
+            </section>
+
+            <!-- Sección 5 -->
+            <section class="space-y-3">
+                <h2 class="text-xl font-heading font-semibold text-brand-500 flex items-center gap-2">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                    5. Cambios a esta Política
+                </h2>
+                <p class="text-slate-300 leading-relaxed">
+                    Nos reservamos el derecho de actualizar esta Política de Privacidad en cualquier momento para reflejar mejoras en la plataforma o cambios normativos. La fecha de la última modificación siempre estará visible en la parte superior de este documento.
+                </p>
+            </section>
+
+            <!-- Sección Contacto -->
+            <section class="space-y-3 border-t border-slate-800 pt-6">
+                <h2 class="text-xl font-heading font-semibold text-brand-500 flex items-center gap-2">
+                    <i data-lucide="mail" class="w-5 h-5"></i>
+                    6. Contacto
+                </h2>
+                <p class="text-slate-300 leading-relaxed">
+                    Si tienes preguntas o dudas sobre nuestras políticas de privacidad, puedes contactarnos a través de los canales oficiales disponibles en la página principal de Friman Apps.
+                </p>
+            </section>
+
+        </article>
+    </main>
+
+    <!-- Pie de página -->
+    <footer class="border-t border-slate-800/80 bg-slate-900/30 py-6 text-center text-xs text-slate-500">
+        <p>&copy; 2026 Friman Apps. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
