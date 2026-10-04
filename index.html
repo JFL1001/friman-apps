@@ -21,6 +21,7 @@
 
   <script>
     tailwind.config = {
+      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
@@ -53,6 +54,12 @@
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
       color: #2b2d42;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    body.dark {
+      background: linear-gradient(135deg, #0f0817 0%, #1a0b2e 35%, #230f38 70%, #12061c 100%);
+      color: #f1f3f9;
     }
 
     .font-display {
@@ -65,6 +72,11 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+      transition: background 0.4s ease, border-color 0.4s ease;
+    }
+    body.dark .glass-header {
+      background: rgba(24, 15, 38, 0.75);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .glass-search {
@@ -73,21 +85,39 @@
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.8);
     }
+    body.dark .glass-search {
+      background: rgba(30, 20, 48, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #f1f3f9;
+    }
 
     .glass-modal {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
     }
+    body.dark .glass-modal {
+      background: rgba(22, 14, 36, 0.95);
+      border-color: rgba(255, 255, 255, 0.1);
+      color: #f1f3f9;
+    }
 
     /* Card Hover Dynamics */
     .app-card {
-      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, background-color 0.35s ease;
+    }
+
+    body.dark .app-card {
+      background-color: rgba(30, 20, 48, 0.85);
+      border-color: rgba(255, 255, 255, 0.1);
     }
 
     .app-card:hover {
       transform: translateY(-8px) scale(1.03);
       box-shadow: 0 20px 30px -10px rgba(255, 133, 161, 0.3);
+    }
+    body.dark .app-card:hover {
+      box-shadow: 0 20px 30px -10px rgba(236, 72, 153, 0.25);
     }
 
     .download-btn-wrapper {
@@ -101,7 +131,7 @@
       transform: translateY(0);
     }
 
-    /* Custom Scrollbar for Modal */
+    /* Custom Scrollbar */
     .custom-scrollbar::-webkit-scrollbar {
       width: 6px;
     }
@@ -109,37 +139,60 @@
       background: #f1f1f1;
       border-radius: 10px;
     }
+    body.dark .custom-scrollbar::-webkit-scrollbar-track {
+      background: #1e1430;
+    }
     .custom-scrollbar::-webkit-scrollbar-thumb {
       background: #ffb3c6;
       border-radius: 10px;
     }
+    body.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #8338ec;
+    }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
       background: #ff85a1;
+    }
+
+    /* Toast Animation */
+    #toast-notification {
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
     }
   </style>
 </head>
 <body class="relative flex flex-col justify-between antialiased selection:bg-pink-300 selection:text-pink-900">
 
+  <!-- Toast Notification Box -->
+  <div id="toast-notification" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none bg-gray-900 text-white dark:bg-pink-600 px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-xs sm:text-sm font-semibold border border-white/20">
+    <i id="toast-icon" class="fa-solid fa-circle-check text-pink-400 dark:text-white text-base"></i>
+    <span id="toast-message">Notificación</span>
+  </div>
+
   <!-- Top Bar / Header -->
   <header class="sticky top-0 z-30 glass-header px-6 py-4 shadow-sm transition-all duration-300">
-    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
       <!-- Title -->
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-400 to-purple-400 flex items-center justify-center text-white shadow-md shadow-pink-200">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-400 to-purple-400 flex items-center justify-center text-white shadow-md shadow-pink-200 dark:shadow-purple-900/40">
           <i class="fa-solid fa-cubes text-lg"></i>
         </div>
-        <h1 class="text-2xl font-bold font-display tracking-tight text-gray-800">
+        <h1 class="text-2xl font-bold font-display tracking-tight text-gray-800 dark:text-white">
           Catálogo de Apps
         </h1>
       </div>
 
-      <!-- Developer Tag & Help Button in Corner -->
-      <div class="flex items-center gap-3">
-        <div class="bg-white/80 border border-pink-200/80 px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-pink-600 shadow-sm flex items-center gap-2">
+      <!-- Actions: Dark Mode, Dev Tag & Help -->
+      <div class="flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
+        <!-- Dark Mode Toggle Button -->
+        <button id="dark-mode-toggle" title="Cambiar tema" class="w-9 h-9 rounded-full bg-white/80 dark:bg-slate-800 border border-pink-200/80 dark:border-purple-500/30 text-gray-700 dark:text-yellow-300 flex items-center justify-center shadow-sm hover:scale-105 active:scale-95 transition-all">
+          <i id="dark-mode-icon" class="fa-solid fa-moon text-sm"></i>
+        </button>
+
+        <div class="bg-white/80 dark:bg-slate-800/80 border border-pink-200/80 dark:border-purple-500/30 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold text-pink-600 dark:text-pink-300 shadow-sm flex items-center gap-2">
           <span class="inline-block w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>
-          Desarrollado por <span class="font-bold tracking-wide text-gray-800">Friman Apps</span>
+          Desarrollado por <span class="font-bold tracking-wide text-gray-800 dark:text-white">Friman Apps</span>
         </div>
-        <a href="ayuda.html" class="px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-pink-500 hover:bg-pink-600 text-white shadow-md transition-all flex items-center gap-1.5">
+        
+        <a href="ayuda.html" class="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold bg-pink-500 hover:bg-pink-600 dark:bg-purple-600 dark:hover:bg-purple-700 text-white shadow-md transition-all flex items-center gap-1.5">
           <i class="fa-solid fa-circle-question"></i>
           <span>Ayuda</span>
         </a>
@@ -148,26 +201,26 @@
   </header>
 
   <!-- Main Catalog Area -->
-  <main class="max-w-6xl mx-auto px-6 py-10 flex-grow w-full">
+  <main class="max-w-6xl mx-auto px-6 py-8 sm:py-10 flex-grow w-full">
     <!-- Subtitle Banner -->
     <div class="text-center mb-8">
-      <h2 class="text-3xl sm:text-4xl font-extrabold font-display text-gray-800 mb-2">Explora mis aplicaciones</h2>
-      <p class="text-gray-600 max-w-lg mx-auto text-sm sm:text-base">
-        Haz clic en cualquiera de las herramientas para ver capturas de pantalla, información detallada y descargarlas gratis.
+      <h2 class="text-3xl sm:text-4xl font-extrabold font-display text-gray-800 dark:text-white mb-2">Explora mis aplicaciones</h2>
+      <p class="text-gray-600 dark:text-gray-300 max-w-lg mx-auto text-sm sm:text-base">
+        Haz clic en cualquiera de las herramientas para ver capturas de pantalla, calificaciones, compartir y descargarlas gratis.
       </p>
     </div>
 
     <!-- Barra de Búsqueda -->
     <div class="max-w-xl mx-auto mb-10">
       <div class="relative flex items-center">
-        <i class="fa-solid fa-magnifying-glass absolute left-4 text-pink-400 text-base"></i>
+        <i class="fa-solid fa-magnifying-glass absolute left-4 text-pink-400 dark:text-purple-400 text-base"></i>
         <input 
           type="text" 
           id="search-input" 
           placeholder="Buscar aplicación o usar #etiqueta (ej. #juegos, #utilidad)..." 
-          class="w-full pl-11 pr-10 py-3.5 rounded-2xl glass-search text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-400 shadow-md transition-all"
+          class="w-full pl-11 pr-10 py-3.5 rounded-2xl glass-search text-sm text-gray-700 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-400 dark:focus:ring-purple-400 shadow-md transition-all"
         >
-        <button id="clear-search" class="absolute right-3.5 text-gray-400 hover:text-pink-500 hidden transition-colors">
+        <button id="clear-search" class="absolute right-3.5 text-gray-400 hover:text-pink-500 dark:hover:text-purple-400 hidden transition-colors">
           <i class="fa-solid fa-circle-xmark text-lg"></i>
         </button>
       </div>
@@ -180,22 +233,56 @@
 
     <!-- Mensaje cuando no hay resultados -->
     <div id="no-results" class="hidden text-center py-12">
-      <div class="w-16 h-16 bg-pink-100 text-pink-500 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl shadow-inner">
+      <div class="w-16 h-16 bg-pink-100 dark:bg-purple-900/50 text-pink-500 dark:text-purple-300 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl shadow-inner">
         <i class="fa-solid fa-ghost"></i>
       </div>
-      <p class="text-gray-700 font-bold text-lg">No se encontraron aplicaciones</p>
-      <p class="text-gray-500 text-sm mt-1">Intenta buscar con otros términos o con una etiqueta diferente.</p>
+      <p class="text-gray-700 dark:text-gray-200 font-bold text-lg">No se encontraron aplicaciones</p>
+      <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Intenta buscar con otros términos o con una etiqueta diferente.</p>
+    </div>
+
+    <!-- Subscription Card Section -->
+    <div class="mt-16 max-w-3xl mx-auto glass-modal p-6 sm:p-8 rounded-3xl border border-white/60 dark:border-white/10 shadow-xl relative overflow-hidden">
+      <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-pink-300/30 dark:bg-purple-600/20 rounded-full blur-2xl pointer-events-none"></div>
+      
+      <div class="flex flex-col md:flex-row items-center gap-6 relative z-10">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-pink-500 to-rose-400 dark:from-purple-600 dark:to-pink-500 text-white flex items-center justify-center text-2xl shadow-lg shrink-0">
+          <i class="fa-solid fa-bell"></i>
+        </div>
+        <div class="text-center md:text-left flex-grow">
+          <h3 class="text-xl font-bold font-display text-gray-800 dark:text-white">Suscríbete a Notificaciones</h3>
+          <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-1">
+            Recibe un correo inmediatamente cuando suba una nueva aplicación o actualización importante.
+          </p>
+        </div>
+      </div>
+
+      <form id="subscribe-form" class="mt-5 flex flex-col sm:flex-row gap-3 relative z-10">
+        <input 
+          type="email" 
+          id="subscribe-email" 
+          required 
+          placeholder="tu.correo@gmail.com" 
+          class="flex-grow px-4 py-3 rounded-2xl bg-white/80 dark:bg-slate-800/90 border border-pink-200 dark:border-purple-500/30 text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-400 dark:focus:ring-purple-400 shadow-inner"
+        >
+        <button 
+          type="submit" 
+          class="px-6 py-3 rounded-2xl font-bold text-xs sm:text-sm bg-gradient-to-r from-pink-500 to-rose-400 dark:from-purple-600 dark:to-pink-500 hover:from-pink-600 hover:to-rose-500 text-white shadow-md shadow-pink-200 dark:shadow-purple-900/50 hover:shadow-lg transition-all flex items-center justify-center gap-2 whitespace-nowrap active:scale-95"
+        >
+          <i class="fa-solid fa-paper-plane"></i>
+          <span>Suscribirme</span>
+        </button>
+      </form>
     </div>
   </main>
 
   <!-- Footer -->
-  <footer class="mt-auto py-6 border-t border-white/40 text-center text-xs text-gray-500">
+  <footer class="mt-auto py-6 border-t border-white/40 dark:border-white/10 text-center text-xs text-gray-500 dark:text-gray-400">
     <p>© <span id="current-year"></span> Friman Apps - Todos los derechos reservados.</p>
-    <p class="mt-1 text-gray-400">Alojado gratuitamente en GitHub Pages</p>
-    <div class="mt-3 flex justify-center items-center gap-3 text-[10px] text-gray-500/70 opacity-60 hover:opacity-100 transition-opacity">
-      <a href="politicas.html" target="_blank" class="hover:underline hover:text-pink-600 transition-colors">Políticas de Privacidad</a>
+    <p class="mt-1 text-gray-400 dark:text-gray-500">Alojado gratuitamente en GitHub Pages</p>
+    <div class="mt-3 flex justify-center items-center gap-3 text-[10px] text-gray-500/70 dark:text-gray-400/70 opacity-80 hover:opacity-100 transition-opacity">
+      <a href="politicas.html" target="_blank" class="hover:underline hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Políticas de Privacidad</a>
       <span>•</span>
-      <a href="terminos.html" target="_blank" class="hover:underline hover:text-pink-600 transition-colors">Condiciones de Uso</a>
+      <a href="terminos.html" target="_blank" class="hover:underline hover:text-pink-600 dark:hover:text-pink-400 transition-colors">Condiciones de Uso</a>
     </div>
   </footer>
 
@@ -214,21 +301,21 @@
 
       <!-- Welcome Text -->
       <div>
-        <h2 class="text-2xl sm:text-3xl font-extrabold font-display text-gray-800">Bienvenido a Friman Apps</h2>
-        <p class="text-xs font-bold uppercase tracking-widest text-pink-500 mt-1">Friman Companies</p>
+        <h2 class="text-2xl sm:text-3xl font-extrabold font-display text-gray-800 dark:text-white">Bienvenido a Friman Apps</h2>
+        <p class="text-xs font-bold uppercase tracking-widest text-pink-500 dark:text-pink-400 mt-1">Friman Companies</p>
       </div>
 
-      <p class="text-gray-600 text-xs sm:text-sm leading-relaxed">
+      <p class="text-gray-600 dark:text-gray-300 text-xs sm:text-sm leading-relaxed">
         Aquí puedes explorar todos los programas desarrollados y descargarlos si así lo prefieres.
       </p>
 
       <!-- Policies & Terms Links -->
-      <div class="flex items-center justify-center gap-4 text-xs font-semibold text-pink-600 border-t border-b border-pink-100 py-3 w-full">
+      <div class="flex items-center justify-center gap-4 text-xs font-semibold text-pink-600 dark:text-pink-400 border-t border-b border-pink-100 dark:border-white/10 py-3 w-full">
         <a href="politicas.html" target="_blank" class="hover:underline flex items-center gap-1 transition-colors">
           <i class="fa-solid fa-shield-halved text-pink-400"></i>
           <span>Políticas de Privacidad</span>
         </a>
-        <span class="text-gray-300">•</span>
+        <span class="text-gray-300 dark:text-gray-600">•</span>
         <a href="terminos.html" target="_blank" class="hover:underline flex items-center gap-1 transition-colors">
           <i class="fa-solid fa-file-contract text-pink-400"></i>
           <span>Términos de Uso</span>
@@ -236,13 +323,13 @@
       </div>
 
       <!-- Consent Checkbox -->
-      <label class="flex items-start gap-3 text-left text-xs sm:text-sm text-gray-700 cursor-pointer select-none bg-pink-50/60 p-3 rounded-2xl border border-pink-100/80 w-full hover:bg-pink-50 transition-colors">
+      <label class="flex items-start gap-3 text-left text-xs sm:text-sm text-gray-700 dark:text-gray-200 cursor-pointer select-none bg-pink-50/60 dark:bg-slate-800/60 p-3 rounded-2xl border border-pink-100/80 dark:border-white/10 w-full hover:bg-pink-50 dark:hover:bg-slate-800 transition-colors">
         <input type="checkbox" id="terms-checkbox" class="mt-0.5 h-4 w-4 rounded border-gray-300 text-pink-500 focus:ring-pink-400 accent-pink-500 cursor-pointer">
-        <span>He leído las <a href="politicas.html" target="_blank" class="text-pink-600 font-semibold underline">políticas de privacidad</a> y <a href="terminos.html" target="_blank" class="text-pink-600 font-semibold underline">términos de uso</a></span>
+        <span>He leído las <a href="politicas.html" target="_blank" class="text-pink-600 dark:text-pink-400 font-semibold underline">políticas de privacidad</a> y <a href="terminos.html" target="_blank" class="text-pink-600 dark:text-pink-400 font-semibold underline">términos de uso</a></span>
       </label>
 
       <!-- Continue Action Button -->
-      <button id="welcome-continue-btn" disabled class="w-full py-3.5 px-6 rounded-2xl font-bold text-white shadow-md transition-all duration-200 bg-gray-300 cursor-not-allowed opacity-60">
+      <button id="welcome-continue-btn" disabled class="w-full py-3.5 px-6 rounded-2xl font-bold text-white shadow-md transition-all duration-200 bg-gray-300 dark:bg-gray-700 cursor-not-allowed opacity-60">
         Continuar
       </button>
     </div>
@@ -254,10 +341,10 @@
     <div id="modal-backdrop" class="absolute inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity duration-300"></div>
 
     <!-- Modal Content Window -->
-    <div class="relative w-full max-w-2xl glass-modal rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-300 border border-white/60 flex flex-col max-h-[90vh]">
+    <div class="relative w-full max-w-2xl glass-modal rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-all duration-300 border border-white/60 dark:border-white/10 flex flex-col max-h-[90vh]">
       
       <!-- Close Button -->
-      <button id="close-modal-btn" class="absolute top-4 right-4 z-20 w-10 h-10 bg-white/80 hover:bg-white text-gray-700 hover:text-pink-600 rounded-full flex items-center justify-center shadow-md transition-all">
+      <button id="close-modal-btn" class="absolute top-4 right-4 z-20 w-10 h-10 bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-gray-700 dark:text-gray-200 hover:text-pink-600 dark:hover:text-pink-400 rounded-full flex items-center justify-center shadow-md transition-all">
         <i class="fa-solid fa-xmark text-lg"></i>
       </button>
 
@@ -265,38 +352,60 @@
       <div class="p-6 sm:p-8 overflow-y-auto custom-scrollbar flex-grow space-y-6">
         
         <!-- Header: Logo, Name & Version -->
-        <div class="flex items-center gap-4">
-          <img id="modal-app-logo" src="" alt="App Logo" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover shadow-md border-2 border-white">
-          <div>
+        <div class="flex items-start sm:items-center gap-4">
+          <img id="modal-app-logo" src="" alt="App Logo" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover shadow-md border-2 border-white dark:border-purple-500/30">
+          <div class="flex-grow">
             <div class="flex items-center gap-2 flex-wrap">
-              <h3 id="modal-app-name" class="text-2xl sm:text-3xl font-bold font-display text-gray-800"></h3>
-              <span id="modal-app-version" class="px-3 py-0.5 rounded-full text-xs font-semibold bg-pink-100 text-pink-700 border border-pink-200"></span>
+              <h3 id="modal-app-name" class="text-2xl sm:text-3xl font-bold font-display text-gray-800 dark:text-white"></h3>
+              <span id="modal-app-version" class="px-3 py-0.5 rounded-full text-xs font-semibold bg-pink-100 dark:bg-purple-900/60 text-pink-700 dark:text-purple-300 border border-pink-200 dark:border-purple-500/30"></span>
             </div>
-            <p class="text-xs sm:text-sm text-gray-500 mt-1">Publicado por <span class="font-medium text-gray-700">Friman Apps</span></p>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">Publicado por <span class="font-medium text-gray-700 dark:text-gray-200">Friman Apps</span></p>
+            
             <!-- Modal Tags Container -->
             <div id="modal-app-tags" class="flex flex-wrap gap-1.5 mt-2"></div>
           </div>
         </div>
 
+        <!-- Rating & User Interaction Box -->
+        <div class="bg-pink-50/60 dark:bg-slate-800/60 p-4 rounded-2xl border border-pink-100 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <div id="modal-star-display" class="flex text-amber-400 text-base"></div>
+            <span id="modal-rating-score" class="text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-200"></span>
+            <span id="modal-rating-count" class="text-xs text-gray-500 dark:text-gray-400"></span>
+          </div>
+
+          <!-- User Star Rating Inputs -->
+          <div class="flex items-center gap-1 bg-white/80 dark:bg-slate-900/80 px-3 py-1.5 rounded-xl border border-pink-100 dark:border-white/10">
+            <span class="text-xs text-gray-600 dark:text-gray-300 font-medium mr-1">Tu voto:</span>
+            <div id="user-rating-stars" class="flex text-gray-300 cursor-pointer">
+              <i data-value="1" class="fa-solid fa-star hover:text-amber-400 transition-colors p-0.5"></i>
+              <i data-value="2" class="fa-solid fa-star hover:text-amber-400 transition-colors p-0.5"></i>
+              <i data-value="3" class="fa-solid fa-star hover:text-amber-400 transition-colors p-0.5"></i>
+              <i data-value="4" class="fa-solid fa-star hover:text-amber-400 transition-colors p-0.5"></i>
+              <i data-value="5" class="fa-solid fa-star hover:text-amber-400 transition-colors p-0.5"></i>
+            </div>
+          </div>
+        </div>
+
         <!-- Description -->
         <div>
-          <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Descripción</h4>
-          <p id="modal-app-description" class="text-gray-700 text-sm sm:text-base leading-relaxed bg-white/50 p-4 rounded-2xl border border-pink-100/60"></p>
+          <h4 class="text-xs font-bold text-gray-400 dark:text-gray-400 uppercase tracking-wider mb-2">Descripción</h4>
+          <p id="modal-app-description" class="text-gray-700 dark:text-gray-200 text-sm sm:text-base leading-relaxed bg-white/50 dark:bg-slate-800/40 p-4 rounded-2xl border border-pink-100/60 dark:border-white/10"></p>
         </div>
 
         <!-- Screenshots Carousel Slider -->
         <div>
-          <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Vistas Previas</h4>
+          <h4 class="text-xs font-bold text-gray-400 dark:text-gray-400 uppercase tracking-wider mb-2">Vistas Previas</h4>
           
-          <div class="relative group rounded-2xl overflow-hidden bg-gray-100 shadow-inner border border-gray-200/80 aspect-video flex items-center justify-center">
+          <div class="relative group rounded-2xl overflow-hidden bg-gray-100 dark:bg-slate-900 shadow-inner border border-gray-200/80 dark:border-white/10 aspect-video flex items-center justify-center">
             <!-- Image Frame -->
             <img id="carousel-img" src="" alt="Screenshot" class="w-full h-full object-cover transition-opacity duration-300">
 
             <!-- Left / Right Controls -->
-            <button id="carousel-prev" class="absolute left-3 w-10 h-10 bg-white/80 hover:bg-white text-gray-800 rounded-full flex items-center justify-center shadow-md opacity-90 sm:opacity-0 group-hover:opacity-100 transition-all">
+            <button id="carousel-prev" class="absolute left-3 w-10 h-10 bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-gray-800 dark:text-white rounded-full flex items-center justify-center shadow-md opacity-90 sm:opacity-0 group-hover:opacity-100 transition-all">
               <i class="fa-solid fa-chevron-left"></i>
             </button>
-            <button id="carousel-next" class="absolute right-3 w-10 h-10 bg-white/80 hover:bg-white text-gray-800 rounded-full flex items-center justify-center shadow-md opacity-90 sm:opacity-0 group-hover:opacity-100 transition-all">
+            <button id="carousel-next" class="absolute right-3 w-10 h-10 bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-gray-800 dark:text-white rounded-full flex items-center justify-center shadow-md opacity-90 sm:opacity-0 group-hover:opacity-100 transition-all">
               <i class="fa-solid fa-chevron-right"></i>
             </button>
 
@@ -308,9 +417,33 @@
         </div>
       </div>
 
-      <!-- Action Footer -->
-      <div class="p-4 sm:p-6 bg-white/80 border-t border-gray-100 flex items-center justify-end">
-        <a id="modal-download-btn" href="#" target="_blank" download class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 text-white font-bold rounded-2xl shadow-lg shadow-pink-200 hover:shadow-pink-300 text-center flex items-center justify-center gap-2 transition-all transform active:scale-95">
+      <!-- Action Footer with Download and Share -->
+      <div class="p-4 sm:p-6 bg-white/80 dark:bg-slate-900/80 border-t border-gray-100 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <!-- Share App Button & Dropdown Options -->
+        <div class="relative w-full sm:w-auto">
+          <button id="share-app-btn" class="w-full sm:w-auto px-5 py-3.5 bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-gray-700 dark:text-gray-200 font-bold rounded-2xl transition-all flex items-center justify-center gap-2 text-sm border border-gray-200 dark:border-white/10 active:scale-95">
+            <i class="fa-solid fa-share-nodes text-pink-500 dark:text-purple-400"></i>
+            <span>Compartir App</span>
+          </button>
+          
+          <!-- Share Dropdown Popover -->
+          <div id="share-dropdown" class="hidden absolute bottom-full left-0 mb-2 w-48 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-gray-100 dark:border-white/10 p-2 z-30 flex flex-col gap-1">
+            <button id="share-copy-link" class="w-full text-left px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-pink-50 dark:hover:bg-slate-700 rounded-xl flex items-center gap-2 transition-colors">
+              <i class="fa-solid fa-link text-pink-500"></i>
+              <span>Copiar Enlace</span>
+            </button>
+            <button id="share-whatsapp" class="w-full text-left px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-emerald-50 dark:hover:bg-slate-700 rounded-xl flex items-center gap-2 transition-colors">
+              <i class="fa-brands fa-whatsapp text-emerald-500 text-sm"></i>
+              <span>WhatsApp</span>
+            </button>
+            <button id="share-twitter" class="w-full text-left px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:bg-sky-50 dark:hover:bg-slate-700 rounded-xl flex items-center gap-2 transition-colors">
+              <i class="fa-brands fa-x-twitter text-slate-800 dark:text-white text-sm"></i>
+              <span>Compartir en X</span>
+            </button>
+          </div>
+        </div>
+
+        <a id="modal-download-btn" href="#" target="_blank" download class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-pink-500 to-rose-400 dark:from-purple-600 dark:to-pink-500 hover:from-pink-600 hover:to-rose-500 text-white font-bold rounded-2xl shadow-lg shadow-pink-200 dark:shadow-purple-900/50 hover:shadow-pink-300 text-center flex items-center justify-center gap-2 transition-all transform active:scale-95 text-sm">
           <i class="fa-solid fa-download"></i>
           <span>Descargar Programa</span>
         </a>
@@ -329,6 +462,8 @@
         descripcion: "Sistema de organización de horarios automático, organizador de tareas por prioridad y almacenador y graficador de calificaciones universitarias.",
         descargaUrl: "https://link-hub.net/9478683/akBVPLf6qJNj",
         etiquetas: ["utilidad", "universidad", "productividad"],
+        ratingBase: 4.9,
+        votesBase: 28,
         capturas: [
           "https://6aace056e86d4c28a0589730.imgix.net/Captura%20de%20pantalla%202026-09-18%20025653.png",
           "https://6aace056e86d4c28a0589730.imgix.net/Captura%20de%20pantalla%202026-09-18%20032507.png",
@@ -343,6 +478,8 @@
         descripcion: "Minecraft Paper es un fangame de Minecraft desarrollado por la comunidad de Scratch con una visión del juego en el aspecto 2D.",
         descargaUrl: "https://link-hub.net/9478683/xFnh2tPMZWbT",
         etiquetas: ["juegos", "scratch", "2d", "fangame"],
+        ratingBase: 4.8,
+        votesBase: 42,
         capturas: [
           "https://i.postimg.cc/tgd8kCND/Captura-de-pantalla-2026-09-20-005344.png",
           "https://i.postimg.cc/FKbwpsVZ/Captura-de-pantalla-2026-09-20-005405.png"
@@ -356,6 +493,8 @@
         descripcion: "EstuPlex es una app movil que te permite organizar tus tareas, te motiva cada dia y te da misiones y metas diarias que te ayudan a ser mejor persona",
         descargaUrl: "https://link-target.net/9478683/QEMCg1xL8eib",
         etiquetas: ["utilidad", "productividad", "movil", "apk"],
+        ratingBase: 4.7,
+        votesBase: 19,
         capturas: [
           "https://6aace056e86d4c28a0589730.imgix.net/estuplex/Galaxy-A12-estuplex-academic.mythex.ai.png",
           "https://6aace056e86d4c28a0589730.imgix.net/estuplex/Galaxy-A12-estuplex-academic.mythex.ai%20(1).png",
@@ -373,6 +512,8 @@
         descripcion: "Randy´s Phase 1 es un fangame de Five Nights at Freddy desarrollado por la comunidad de Scratch, su creador oficial es BeaglesChuses.",
         descargaUrl: "https://link-target.net/9478683/cujXlv1yjmDw",
         etiquetas: ["juegos", "scratch", "2d", "fangame"],
+        ratingBase: 4.6,
+        votesBase: 15,
         capturas: [
           "https://i.postimg.cc/KjKRchpd/Captura-de-pantalla-2026-09-20-224344.png",
           "https://i.postimg.cc/VvSdsPZ2/Captura-de-pantalla-2026-09-20-224419.png",
@@ -404,12 +545,158 @@
     const carouselNext = document.getElementById('carousel-next');
     const carouselDots = document.getElementById('carousel-dots');
 
-    // First Visit / Welcome Modal Elements
+    const modalStarDisplay = document.getElementById('modal-star-display');
+    const modalRatingScore = document.getElementById('modal-rating-score');
+    const modalRatingCount = document.getElementById('modal-rating-count');
+    const userRatingStars = document.getElementById('user-rating-stars');
+
+    const shareAppBtn = document.getElementById('share-app-btn');
+    const shareDropdown = document.getElementById('share-dropdown');
+    const shareCopyLink = document.getElementById('share-copy-link');
+    const shareWhatsapp = document.getElementById('share-whatsapp');
+    const shareTwitter = document.getElementById('share-twitter');
+
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const darkModeIcon = document.getElementById('dark-mode-icon');
+
+    const subscribeForm = document.getElementById('subscribe-form');
+    const subscribeEmail = document.getElementById('subscribe-email');
+
     const welcomeModal = document.getElementById('welcome-modal');
     const termsCheckbox = document.getElementById('terms-checkbox');
     const welcomeContinueBtn = document.getElementById('welcome-continue-btn');
 
-    // Check First Visit Logic
+    function showToast(message, isSuccess = true) {
+      const toast = document.getElementById('toast-notification');
+      const toastMessage = document.getElementById('toast-message');
+      const toastIcon = document.getElementById('toast-icon');
+
+      toastMessage.textContent = message;
+      if (isSuccess) {
+        toastIcon.className = "fa-solid fa-circle-check text-pink-400 dark:text-white text-base";
+      } else {
+        toastIcon.className = "fa-solid fa-circle-info text-amber-400 text-base";
+      }
+
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3000);
+    }
+
+    function initDarkMode() {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.body.classList.add('dark');
+        darkModeIcon.className = 'fa-solid fa-sun text-yellow-300';
+      } else {
+        document.body.classList.remove('dark');
+        darkModeIcon.className = 'fa-solid fa-moon text-gray-700';
+      }
+    }
+
+    darkModeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      if (document.body.classList.contains('dark')) {
+        localStorage.setItem('theme', 'dark');
+        darkModeIcon.className = 'fa-solid fa-sun text-yellow-300';
+        showToast('Modo Nocturno activado');
+      } else {
+        localStorage.setItem('theme', 'light');
+        darkModeIcon.className = 'fa-solid fa-moon text-gray-700';
+        showToast('Modo Claro activado');
+      }
+    });
+
+    function getAppRating(app) {
+      const savedUserRating = localStorage.getItem(`rating_user_${app.id}`);
+      let votes = app.votesBase;
+      let totalSum = app.ratingBase * app.votesBase;
+
+      if (savedUserRating) {
+        votes += 1;
+        totalSum += parseFloat(savedUserRating);
+      }
+
+      const average = (totalSum / votes).toFixed(1);
+      return {
+        average: parseFloat(average),
+        votes: votes,
+        userRating: savedUserRating ? parseInt(savedUserRating) : 0
+      };
+    }
+
+    function renderStarIcons(rating, container) {
+      container.innerHTML = '';
+      const fullStars = Math.floor(rating);
+      const hasHalfStar = rating % 1 >= 0.5;
+
+      for (let i = 1; i <= 5; i++) {
+        const star = document.createElement('i');
+        if (i <= fullStars) {
+          star.className = 'fa-solid fa-star';
+        } else if (i === fullStars + 1 && hasHalfStar) {
+          star.className = 'fa-solid fa-star-half-stroke';
+        } else {
+          star.className = 'fa-regular fa-star text-gray-300 dark:text-gray-600';
+        }
+        container.appendChild(star);
+      }
+    }
+
+    function setupUserRatingStars(app) {
+      const ratingData = getAppRating(app);
+      const userRating = ratingData.userRating;
+
+      const starIcons = userRatingStars.querySelectorAll('i');
+      
+      function highlightStars(val) {
+        starIcons.forEach(star => {
+          const starVal = parseInt(star.getAttribute('data-value'));
+          if (starVal <= val) {
+            star.className = 'fa-solid fa-star text-amber-400 p-0.5';
+          } else {
+            star.className = 'fa-regular fa-star text-gray-300 dark:text-gray-600 p-0.5';
+          }
+        });
+      }
+
+      highlightStars(userRating);
+
+      starIcons.forEach(star => {
+        star.onclick = (e) => {
+          e.stopPropagation();
+          const val = parseInt(star.getAttribute('data-value'));
+          localStorage.setItem(`rating_user_${app.id}`, val);
+          highlightStars(val);
+          
+          updateModalRatingUI(app);
+          renderAppCards();
+          showToast(`¡Gracias por calificar ${app.nombre} con ${val} ⭐!`);
+        };
+
+        star.onmouseenter = () => {
+          const val = parseInt(star.getAttribute('data-value'));
+          highlightStars(val);
+        };
+      });
+
+      userRatingStars.onmouseleave = () => {
+        const currentData = getAppRating(app);
+        highlightStars(currentData.userRating);
+      };
+    }
+
+    function updateModalRatingUI(app) {
+      const ratingData = getAppRating(app);
+      renderStarIcons(ratingData.average, modalStarDisplay);
+      modalRatingScore.textContent = `${ratingData.average} / 5.0`;
+      modalRatingCount.textContent = `(${ratingData.votes} votos)`;
+    }
+
     function checkFirstVisit() {
       const hasVisited = localStorage.getItem('hasVisitedFrimanApps');
       if (!hasVisited) {
@@ -426,10 +713,10 @@
     termsCheckbox.addEventListener('change', () => {
       if (termsCheckbox.checked) {
         welcomeContinueBtn.disabled = false;
-        welcomeContinueBtn.className = 'w-full py-3.5 px-6 rounded-2xl font-bold text-white shadow-lg shadow-pink-200 bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 cursor-pointer transform active:scale-95 transition-all';
+        welcomeContinueBtn.className = 'w-full py-3.5 px-6 rounded-2xl font-bold text-white shadow-lg shadow-pink-200 dark:shadow-purple-900/40 bg-gradient-to-r from-pink-500 to-rose-400 hover:from-pink-600 hover:to-rose-500 cursor-pointer transform active:scale-95 transition-all';
       } else {
         welcomeContinueBtn.disabled = true;
-        welcomeContinueBtn.className = 'w-full py-3.5 px-6 rounded-2xl font-bold text-white shadow-md transition-all duration-200 bg-gray-300 cursor-not-allowed opacity-60';
+        welcomeContinueBtn.className = 'w-full py-3.5 px-6 rounded-2xl font-bold text-white shadow-md transition-all duration-200 bg-gray-300 dark:bg-gray-700 cursor-not-allowed opacity-60';
       }
     });
 
@@ -458,27 +745,36 @@
       }
 
       appsToRender.forEach((app) => {
+        const ratingData = getAppRating(app);
         const card = document.createElement('div');
-        card.className = 'app-card group relative bg-white/90 rounded-3xl p-5 shadow-lg shadow-pink-100/50 border border-white flex flex-col items-center text-center cursor-pointer overflow-hidden';
+        card.className = 'app-card group relative bg-white/90 dark:bg-slate-800/90 rounded-3xl p-5 shadow-lg shadow-pink-100/50 dark:shadow-purple-950/20 border border-white dark:border-white/10 flex flex-col items-center text-center cursor-pointer overflow-hidden';
         
         // Render Tags Badges
         const tagsHTML = app.etiquetas ? app.etiquetas.map(tag => 
-          `<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-pink-50 text-pink-600 border border-pink-100">#${tag}</span>`
+          `<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-pink-50 dark:bg-purple-900/40 text-pink-600 dark:text-purple-300 border border-pink-100 dark:border-purple-500/20">#${tag}</span>`
         ).join(' ') : '';
 
         card.innerHTML = `
-          <div class="relative w-24 h-24 mb-3 rounded-2xl overflow-hidden shadow-md border-2 border-pink-50/80 group-hover:shadow-pink-200 transition-all">
+          <div class="relative w-24 h-24 mb-3 rounded-2xl overflow-hidden shadow-md border-2 border-pink-50/80 dark:border-purple-500/30 group-hover:shadow-pink-200 dark:group-hover:shadow-purple-900/50 transition-all">
             <img src="${app.logo}" alt="${app.nombre}" class="w-full h-full object-cover">
           </div>
-          <h3 class="text-lg font-bold font-display text-gray-800 mb-0.5 line-clamp-1">${app.nombre}</h3>
-          <span class="text-xs text-pink-500 font-semibold mb-2">${app.version}</span>
+
+          <h3 class="text-lg font-bold font-display text-gray-800 dark:text-white mb-0.5 line-clamp-1">${app.nombre}</h3>
+          <span class="text-xs text-pink-500 dark:text-purple-400 font-semibold mb-1.5">${app.version}</span>
           
+          <!-- Card Rating Stars -->
+          <div class="flex items-center gap-1.5 mb-3 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-full border border-amber-100 dark:border-amber-900/30">
+            <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+            <span class="text-xs font-bold text-gray-700 dark:text-gray-200">${ratingData.average}</span>
+            <span class="text-[10px] text-gray-400">(${ratingData.votes})</span>
+          </div>
+
           <div class="flex flex-wrap justify-center gap-1 mb-4">
             ${tagsHTML}
           </div>
 
           <div class="download-btn-wrapper w-full mt-auto">
-            <button class="w-full py-2.5 px-4 bg-pink-500 hover:bg-pink-600 text-white font-semibold text-xs rounded-xl shadow-md flex items-center justify-center gap-2 transition-all">
+            <button class="w-full py-2.5 px-4 bg-pink-500 hover:bg-pink-600 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-semibold text-xs rounded-xl shadow-md flex items-center justify-center gap-2 transition-all">
               <i class="fa-solid fa-circle-info"></i>
               <span>Ver Detalles</span>
             </button>
@@ -536,10 +832,14 @@
       modalDesc.textContent = app.descripcion;
       modalDownloadBtn.href = app.descargaUrl;
 
-      // Render Modal Tags
+      // Modal Tags
       modalTags.innerHTML = app.etiquetas ? app.etiquetas.map(tag => 
-        `<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-pink-100/70 text-pink-700 border border-pink-200">#${tag}</span>`
+        `<span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-pink-100/70 dark:bg-purple-900/60 text-pink-700 dark:text-purple-300 border border-pink-200 dark:border-purple-500/30">#${tag}</span>`
       ).join('') : '';
+
+      // Update Ratings & Setup Star Controls
+      updateModalRatingUI(app);
+      setupUserRatingStars(app);
 
       updateCarousel();
 
@@ -550,6 +850,7 @@
     }
 
     function closeModal() {
+      shareDropdown.classList.add('hidden');
       const windowEl = modal.querySelector('.glass-modal');
       windowEl.classList.remove('scale-100');
       windowEl.classList.add('scale-95');
@@ -569,7 +870,7 @@
       carouselDots.innerHTML = '';
       currentApp.capturas.forEach((_, idx) => {
         const dot = document.createElement('button');
-        dot.className = `w-2 h-2 rounded-full transition-all ${idx === currentImageIndex ? 'bg-pink-400 w-5' : 'bg-white/60'}`;
+        dot.className = `w-2 h-2 rounded-full transition-all ${idx === currentImageIndex ? 'bg-pink-400 dark:bg-purple-400 w-5' : 'bg-white/60'}`;
         dot.addEventListener('click', (e) => {
           e.stopPropagation();
           currentImageIndex = idx;
@@ -593,6 +894,81 @@
       updateCarousel();
     });
 
+    shareAppBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (!currentApp) return;
+
+      const shareData = {
+        title: `${currentApp.nombre} - Friman Apps`,
+        text: `Descarga ${currentApp.nombre} gratis en Friman Apps!`,
+        url: window.location.href
+      };
+
+      if (navigator.share) {
+        try {
+          await navigator.share(shareData);
+          showToast('¡Gracias por compartir!');
+          return;
+        } catch (err) {
+          // Fallback to dropdown if share API cancelled or unsupported
+        }
+      }
+
+      shareDropdown.classList.toggle('hidden');
+    });
+
+    function copyAppToClipboard() {
+      const shareText = `Descarga ${currentApp.nombre} gratis en Friman Apps: ${window.location.href}`;
+      
+      const tempInput = document.createElement('textarea');
+      tempInput.value = shareText;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+
+      shareDropdown.classList.add('hidden');
+      showToast('¡Enlace copiado al portapapeles!');
+    }
+
+    shareCopyLink.addEventListener('click', copyAppToClipboard);
+
+    shareWhatsapp.addEventListener('click', () => {
+      if (!currentApp) return;
+      const text = encodeURIComponent(`¡Descarga ${currentApp.nombre} gratis en Friman Apps! ${window.location.href}`);
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+      shareDropdown.classList.add('hidden');
+    });
+
+    shareTwitter.addEventListener('click', () => {
+      if (!currentApp) return;
+      const text = encodeURIComponent(`¡Mira ${currentApp.nombre} en Friman Apps!`);
+      const url = encodeURIComponent(window.location.href);
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+      shareDropdown.classList.add('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!shareAppBtn.contains(e.target) && !shareDropdown.contains(e.target)) {
+        shareDropdown.classList.add('hidden');
+      }
+    });
+
+    subscribeForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = subscribeEmail.value.trim();
+      if (!email) return;
+
+      const subscriptions = JSON.parse(localStorage.getItem('friman_subscribers') || '[]');
+      if (!subscriptions.includes(email)) {
+        subscriptions.push(email);
+        localStorage.setItem('friman_subscribers', JSON.stringify(subscriptions));
+      }
+
+      subscribeEmail.value = '';
+      showToast('¡Te has suscrito con éxito!');
+    });
+
     closeModalBtn.addEventListener('click', closeModal);
     modalBackdrop.addEventListener('click', closeModal);
 
@@ -601,6 +977,8 @@
     });
 
     document.getElementById('current-year').textContent = new Date().getFullYear();
+    
+    initDarkMode();
     renderAppCards();
     checkFirstVisit();
   </script>
