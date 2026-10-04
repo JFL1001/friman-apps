@@ -57,6 +57,7 @@
       transition: background 0.4s ease, color 0.4s ease;
     }
 
+    /* Dark Mode Theme: Dark Violet / Night Blue with Pink Neon Accents */
     body.dark {
       background: linear-gradient(135deg, #0f0817 0%, #1a0b2e 35%, #230f38 70%, #12061c 100%);
       color: #f1f3f9;
@@ -180,7 +181,7 @@
         </h1>
       </div>
 
-      <!-- Actions: Dark Mode, Dev Tag & Help -->
+      <!-- Actions: Dark Mode Toggle, Dev Tag & Help -->
       <div class="flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
         <!-- Dark Mode Toggle Button -->
         <button id="dark-mode-toggle" title="Cambiar tema" class="w-9 h-9 rounded-full bg-white/80 dark:bg-slate-800 border border-pink-200/80 dark:border-purple-500/30 text-gray-700 dark:text-yellow-300 flex items-center justify-center shadow-sm hover:scale-105 active:scale-95 transition-all">
@@ -226,7 +227,7 @@
       </div>
     </div>
 
-    <!-- Grid Container -->
+    <!-- Dynamic Grid Container -->
     <div id="apps-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       <!-- Dynamic app cards injected here via JS -->
     </div>
@@ -335,7 +336,7 @@
     </div>
   </div>
 
-  <!-- App Details Modal -->
+  <!-- App Details Modal with Share App button & Dropdown -->
   <div id="app-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 opacity-0 pointer-events-none transition-all duration-300">
     <!-- Backdrop Blur -->
     <div id="modal-backdrop" class="absolute inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity duration-300"></div>
@@ -452,6 +453,7 @@
     </div>
   </div>
 
+  <!-- JavaScript Logic -->
   <script>
     const appsData = [
       {
@@ -910,7 +912,7 @@
           showToast('¡Gracias por compartir!');
           return;
         } catch (err) {
-          // Fallback to dropdown if share API cancelled or unsupported
+          // Fallback to custom dropdown if share API is cancelled or unsupported
         }
       }
 
